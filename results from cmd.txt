@@ -1,0 +1,94 @@
+cd reo
+
+C:\Users\gksan\REO>py baseline.py
+BASELINE  cost: 23525.9  carbon: 439.3  unserved: 0.0
+OPTIMIZER cost: 15686.8  carbon: 360.8
+Cost saved: 7839.1
+Battery energy used up: 64.0 MWh
+Fair saving: 4639.1
+
+C:\Users\gksan\REO>py explain.py
+[07:30] EVENT: BESS-2 goes offline.
+  Situation: solar 64 -> 77 MW, price 48 -> 49, demand 143 -> 146 MW.
+  Action: BESS-2 excluded from planning; BESS-1 and the grid cover the load.
+  Result: demand fully served, no blackout.
+
+[11:00] EVENT: cloud cover hits solar.
+  Situation: solar 189 -> 68 MW, price 41 -> 40, demand 175 -> 177 MW.
+  Action: bought more from the grid (0 -> 16 MW) to cover the gap.
+  Action: stopped selling (102 -> 0 MW) because power was needed locally.
+  Result: demand fully served, no blackout.
+
+[18:00] EVENT: electricity price spikes.
+  Situation: solar 13 -> 0 MW, price 57 -> 119, demand 173 -> 168 MW.
+  Action: discharged batteries (0 -> 40 MW) to avoid buying at a high price.
+  Result: demand fully served, no blackout.
+
+[21:00] EVENT: industrial demand surges.
+  Situation: solar 0 -> 0 MW, price 52 -> 49, demand 141 -> 181 MW.
+  Action: bought more from the grid (28 -> 76 MW) to cover the gap.
+  Result: demand fully served, no blackout.
+
+
+C:\Users\gksan\REO>py plot.py
+
+C:\Users\gksan\REO>py fair.py
+ seed  saving_pct  saving_pct_fair
+    0         3.0              3.0
+    1         6.3             13.4
+    2        -1.2             -1.2
+    3         3.4              3.4
+    4         5.2              5.2
+    5         1.7              1.6
+    6         1.3              2.8
+    7         2.5              2.8
+    8        10.2             10.2
+    9         1.6              3.6
+   10        -3.1              4.9
+   11         1.9             14.1
+   12         7.7              7.7
+   13         1.7              1.7
+   14         0.1              0.1
+   15         3.0              3.0
+   16         7.3              7.3
+   17        -5.1             11.8
+   18         0.6              8.6
+   19        15.5             15.5
+
+mean: 6.0 %
+days optimizer won: 19 of 20
+
+C:\Users\gksan\REO>py sensitivity.py
+penalty     0: mean 3.2%  wins 17/20
+penalty    50: mean 4.0%  wins 17/20
+penalty   200: mean 6.0%  wins 19/20
+penalty  1000: mean 12.0%  wins 19/20
+
+C:\Users\gksan\REO>py diagnose.py
+WORST 6 DAYS BY SAVING
+    seed  saving_pct  unserved_opt  unserved_base
+17    17        -5.1          18.4           82.4
+10    10        -3.1          99.8          140.1
+2      2        -1.2           0.0            0.0
+14    14         0.1           0.0            0.0
+18    18         0.6          11.3           30.4
+6      6         1.3           0.0            1.7
+
+WORST 6 DAYS BY UNSERVED ENERGY
+    seed  saving_pct  unserved_opt  unserved_base
+10    10        -3.1          99.8          140.1
+9      9         1.6          29.5           34.9
+17    17        -5.1          18.4           82.4
+5      5         1.7          15.0           15.0
+18    18         0.6          11.3           30.4
+3      3         3.4          10.1           10.7
+
+C:\Users\gksan\REO>py check.py
+saving_pct            3.18
+carbon_saving_pct     1.92
+unserved_opt          9.20
+unserved_base        17.99
+curtail               0.00
+dtype: float64
+days: 20
+days optimizer beat baseline: 17
